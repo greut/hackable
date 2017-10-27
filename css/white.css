@@ -1,0 +1,21 @@
+html {
+    background-color: rgba(204,204,204,0.5);
+    color: #444444;
+}
+
+.menu a {
+    text-decoration: none;
+    padding:10px;
+    color: #444444;
+}
+
+.menu li a:hover, .menu li a:focus, .menu li a:active {
+    background: rgba(100, 100, 100, 0.5);
+    text-decoration: underline;
+}
+
+.nav-right select {
+    background: transparent;
+    border: none;
+    color: #444444;
+}
