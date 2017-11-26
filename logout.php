@@ -1,5 +1,5 @@
 <?php
-if(!defined('DIRECT')) { print "Direct access not allowed!"; exit; }
+if(!defined('DIRECT')) { exit("Direct access is not allowed!"); }
 
 $_SESSION = [];
 if (ini_get("session.use_cookies")) {
@@ -11,5 +11,5 @@ if (ini_get("session.use_cookies")) {
 }
 
 session_destroy();
-header('Location: index.php');
-?>
+
+header('Location: home.html');

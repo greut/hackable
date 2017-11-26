@@ -1,41 +1,42 @@
 <?php
-if(!defined('DIRECT')) { print "Direct access not allowed!"; exit; }
+if(!defined('DIRECT')) { exit("Direct access is not allowed!"); }
 
 $username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_STRING);
-if(is_null($username) or $username === FALSE) {
+if(is_null($username) || $username === FALSE) {
     $username = NULL;
 }
 $password = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_STRING);
-if(is_null($password) or $password === FALSE) {
+if(is_null($password) || $password === FALSE) {
     $password = NULL;
 }
 $captcha = filter_input(INPUT_POST, 'captcha', FILTER_SANITIZE_STRING);
-if(is_null($captcha) or $captcha === FALSE) {
+if(is_null($captcha) || $captcha === FALSE) {
     $captcha = '';
 }
 
 unset($_SESSION['identified']);
 
-if(strcmp($_SESSION['captcha'], $captcha) === 0) {
-    if (!is_null($username) and !is_null($password)) {
-        $username = trim($username);
-        $password = trim($password);
+if(
+   strcmp($_SESSION['captcha'], $captcha) === 0 &&
+   !is_null($username) && !is_null($password)
+) {
+    $username = trim($username);
+    $password = trim($password);
 
-        if (($handle = fopen('data/db.txt', 'r')) !== FALSE) {
-            while (($buffer = fgets($handle, 4096)) !== FALSE) {
-                $infos = explode(';', $buffer);
-                if (count($infos) === 3) {
-                    if (strcmp(trim($infos[0]) . trim($infos[1]), $username . hash('sha256', $password)) === 0) {
-                        $_SESSION['identified'] = $username;
-                        $_SESSION['role'] = intval($infos[2]);
-                        fclose($handle);
-                        header('Location: index.php');
-                        exit;
-                    }
+    if (($handle = fopen('data/db.txt', 'r')) !== FALSE) {
+        while (($infos = fgetcsv($handle, 4096, ';')) !== FALSE) {
+            if (count($infos) === 3) {
+                list($name, $hash, $role) = $infos;
+                if (strcmp(trim($name) . trim($hash), $username . hash('sha256', $password)) === 0) {
+                    $_SESSION['identified'] = $username;
+                    $_SESSION['role'] = intval($role);
+                    fclose($handle);
+                    header('Location: home.html');
+                    exit;
                 }
             }
-            fclose($handle);
         }
+        fclose($handle);
     }
 }
 ?>
@@ -43,24 +44,22 @@ if(strcmp($_SESSION['captcha'], $captcha) === 0) {
     <fieldset>
         <legend>Credentials</legend>
         <p>
-            <label for="username">Username : </label>
-            <input id="username" type="text" name="username" autofocus="autofocus"/>
+            <label for="username">Username :</label>
+            <input id="username" type="text" name="username" autofocus="autofocus" value="<?php echo $username ?>">
         </p>
         <p>
-            <label for="password">Password : </label>
-            <input id="password" type="text" name="password"/>
+            <label for="password">Password :</label>
+            <input id="password" type="password" name="password">
+        </p>
+        <p class="no-label">
+            <img id="img_captcha" src="captcha.php" alt="This is a Captcha, install GD if it doesn't appear">
         </p>
         <p>
-            <label for="img_captcha">&nbsp;</label>
-            <img id="img_captcha" src="captcha.php" alt="Captcha"><br>
-        </p>
-        <p>
-            <label for="captcha">Captcha : </label>
+            <label for="captcha">Captcha :</label>
             <input id="captcha" type="text" name="captcha">
         </p>
-        <p>
-            <label for="try">&nbsp;</label>
-            <input id="try" type="submit" value="Try...">
+        <p class="no-label">
+            <button type="submit">Try...</button>
         </p>
     </fieldset>
 </form>

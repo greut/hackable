@@ -124,7 +124,8 @@ input[type="submit"] {
     width: 200px;
 }
 
-input[type="text"] {
+input[type="text"],
+input[type="password"] {
     width: 200px;
     border: dashed thin darkgray;
     -webkit-border-radius: 5px;
@@ -135,6 +136,10 @@ input[type="text"] {
 label {
     display : inline-block;
     width   : 150px;
+}
+
+.no-label {
+    padding-left: 155px;
 }
 
 legend {

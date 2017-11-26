@@ -34,4 +34,3 @@ for($i=0;$i<$SIZE*2;$i++) {
 header('Content-Type: image/jpeg');
 imagejpeg($im);
 imagedestroy($im);
-?>
